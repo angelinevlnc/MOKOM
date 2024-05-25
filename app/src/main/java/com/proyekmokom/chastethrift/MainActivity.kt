@@ -18,26 +18,32 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val idUser = intent.getIntExtra("idUser", 0) // 0 if extra "idUser" is not found
+
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
-        navController.navigate(R.id.homeFragment)
+        var action = HomeFragmentDirections.actionGlobalHomeFragment(idUser)
+        navController.navigate(action)
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_home -> {
-                    // Navigasi ke fragment home
-                    navController.navigate(R.id.homeFragment)
+                    // Navigasi ke fragment home dgn idUser
+                    action = HomeFragmentDirections.actionGlobalHomeFragment(idUser)
+                    navController.navigate(action)
                     true
                 }
                 R.id.menu_profile -> {
-                    // Navigasi ke fragment profile
-                    navController.navigate(R.id.profileFragment)
+                    // Navigasi ke fragment profile dgn idUser
+                    action = ProfileFragmentDirections.actionGlobalProfileFragment(idUser)
+                    navController.navigate(action)
                     true
                 }
                 R.id.menu_cart -> {
-                    // Navigasi ke fragment cart
-                    navController.navigate(R.id.cartFragment)
+                    // Navigasi ke fragment cart dgn idUser
+                    action = CartFragmentDirections.actionGlobalCartFragment(idUser)
+                    navController.navigate(action)
                     true
                 }
                 else -> false

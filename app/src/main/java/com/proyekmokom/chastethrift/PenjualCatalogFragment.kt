@@ -7,11 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 
 class PenjualCatalogFragment : Fragment() {
 
     lateinit var rvCatalog: RecyclerView
     lateinit var layoutManager: RecyclerView.LayoutManager
+
+    private lateinit var db: AppDatabase
+    private val coroutine = CoroutineScope(Dispatchers.IO)
+    private lateinit var itemList: ArrayList<ItemEntity>
+    private lateinit var rvCatalogAdapter: RvCatalogAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -26,14 +38,24 @@ class PenjualCatalogFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvCatalog = view.findViewById(R.id.rvPenjualCatalog)
 
-        layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false)
-        rvCatalog.layoutManager = layoutManager
-        // Buat instance adapter dan pasang ke RecyclerView
-        val adapter = RvCatalogAdapter(FakeList.catalog)
-        rvCatalog.adapter = adapter
+        // Retrieve the arguments using Safe Args
+        val args: PenjualCatalogFragmentArgs by navArgs()
+        var idUser:Int = args.idUser
 
+        db = AppDatabase.build(requireContext())
+        itemList = ArrayList()
+        rvCatalog.layoutManager = LinearLayoutManager(requireContext(),
+            LinearLayoutManager.VERTICAL, false)
+        rvCatalogAdapter = RvCatalogAdapter(itemList)
+        rvCatalog.adapter = rvCatalogAdapter
 
-
-
+        coroutine.launch(Dispatchers.IO) {
+            val tmpItemList = db.itemDao().searchIdUser(idUser)
+            itemList.clear()
+            itemList.addAll(tmpItemList)
+            withContext(Dispatchers.Main) {
+                rvCatalogAdapter.notifyDataSetChanged()
+            }
+        }
     }
 }
