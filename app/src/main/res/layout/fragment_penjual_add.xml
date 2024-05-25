@@ -40,6 +40,23 @@
             android:textSize="10sp" />
 
         <TextView
+            android:id="@+id/textView9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Price"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextText5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="e.g. Rp 50.000"
+            android:inputType="text"
+            android:textSize="10sp" />
+
+        <TextView
             android:id="@+id/textView8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,23 +119,6 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="e.g. S,M,L"
-            android:inputType="text"
-            android:textSize="10sp" />
-
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Price"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/editTextText5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="e.g. Rp 50.000"
             android:inputType="text"
             android:textSize="10sp" />
 

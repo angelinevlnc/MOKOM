@@ -9,22 +9,37 @@
         android:id="@+id/penjualCatalogFragment"
         android:name="com.proyekmokom.chastethrift.PenjualCatalogFragment"
         android:label="fragment_penjual_catalog"
-        tools:layout="@layout/fragment_penjual_catalog" />
+        tools:layout="@layout/fragment_penjual_catalog" >
+        <argument
+            android:name="idUser"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
     <fragment
         android:id="@+id/penjualAddFragment"
         android:name="com.proyekmokom.chastethrift.PenjualAddFragment"
         android:label="fragment_penjual_add"
-        tools:layout="@layout/fragment_penjual_add" />
+        tools:layout="@layout/fragment_penjual_add" >
+        <argument
+            android:name="idUser"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
     <fragment
         android:id="@+id/penjualProfileFragment"
         android:name="com.proyekmokom.chastethrift.PenjualProfileFragment"
         android:label="fragment_penjual_profile"
-        tools:layout="@layout/fragment_penjual_profile" />
+        tools:layout="@layout/fragment_penjual_profile" >
+        <argument
+            android:name="idUser"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
     <action
-        android:id="@+id/action_global_penjualAddFragment2"
+        android:id="@+id/action_global_penjualAddFragment"
         app:destination="@id/penjualAddFragment" />
     <action
-        android:id="@+id/action_global_penjualCatalogFragment2"
+        android:id="@+id/action_global_penjualCatalogFragment"
         app:destination="@id/penjualCatalogFragment" />
     <action
         android:id="@+id/action_global_penjualProfileFragment"

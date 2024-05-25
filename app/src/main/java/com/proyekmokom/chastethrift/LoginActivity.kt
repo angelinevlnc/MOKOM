@@ -6,54 +6,68 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginActivity : AppCompatActivity() {
-
     lateinit var username:TextView
     lateinit var password:TextView
     lateinit var btnLogin:Button
+
+    private lateinit var db: AppDatabase
+    private lateinit var user: ArrayList<UserEntity>
+    private val coroutine = CoroutineScope(Dispatchers.IO)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val listUser = FakeUserList.user
         username = findViewById(R.id.editLoginUsername)
         password = findViewById(R.id.editLoginPassword)
         btnLogin = findViewById(R.id.btnLogin)
 
+        db = AppDatabase.build(this)
+        user = ArrayList()
+        coroutine.launch {
+            val tmpUser = db.userDao().fetch()
+            user.clear()
+            user.addAll(tmpUser)
+        }
+
         btnLogin.setOnClickListener {
-            var cek:Int = 0 // 1 = penjual; 2 = pembeli
-            var idUser:Int = 0 // untuk ambil id user
-            if(username.text.toString() != "" && password.text.toString() != ""){
-                for (user in listUser){
-                    if(user.username == username.text.toString() && user.password == password.text.toString()){
-                        cek = user.role
-                        idUser = user.id
+            if (username.text.toString().isNotEmpty() && password.text.toString().isNotEmpty()) {
+                coroutine.launch(Dispatchers.IO) {
+                    val user = db.userDao().cek(username.text.toString(), password.text.toString())
+                    withContext(Dispatchers.Main) {
+                        if (user != null) {
+                            val cek = user.first().role
+                            val idUser = user.first().id_user!!
+                            navigateToMainActivity(cek, idUser)
+                        } else {
+                            Toast.makeText(this@LoginActivity, "Username atau password salah!", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-            }
-            else{
+            } else {
                 Toast.makeText(this, "Semua inputan harus diisi!", Toast.LENGTH_SHORT).show()
             }
-
-            if(cek == 0){
-                //tidak ditemukan
-                Toast.makeText(this, "Username atau password salah!", Toast.LENGTH_SHORT).show()
-            }
-            else if(cek == 1){
-                //penjual
-                val intent = Intent(this, MainActivityPenjual::class.java)
-                intent.putExtra("idUser", idUser) //Kirim idUser
-                startActivity(intent)
-                finish() // Finish LoginActivity if you don't want the user to go back to it
-            }
-            else if(cek == 2){
-                //pembeli
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("idUser", idUser) //Kirim idUser
-                startActivity(intent)
-                finish() // Finish LoginActivity if you don't want the user to go back to it
-            }
         }
+    }
+    private fun navigateToMainActivity(cek: Int, idUser: Int) {
+        when (cek) {
+            0 -> Toast.makeText(this, "Username atau password salah!", Toast.LENGTH_SHORT).show()
+            1 -> navigateTo(MainActivityPenjual::class.java, idUser)
+            2 -> navigateTo(MainActivity::class.java, idUser)
+            3 -> navigateTo(MainActivity::class.java, idUser) // Nanti diganti utk ke admin
+        }
+    }
+    private fun navigateTo(destination: Class<*>, idUser: Int) {
+        val intent = Intent(this, destination)
+        intent.putExtra("idUser", idUser)
+        startActivity(intent)
+        finish()
     }
 }

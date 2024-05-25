@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 
 class CartFragment : Fragment() {
 
