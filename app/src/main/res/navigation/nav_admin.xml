@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_admin"
+    app:startDestination="@id/adminProfileFragment">
+
+    <fragment
+        android:id="@+id/adminProfileFragment"
+        android:name="com.proyekmokom.chastethrift.AdminProfileFragment"
+        android:label="fragment_admin_profile"
+        tools:layout="@layout/fragment_admin_profile" >
+        <argument
+            android:name="idUser"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/adminReportFragment"
+        android:name="com.proyekmokom.chastethrift.AdminReportFragment"
+        android:label="fragment_admin_report"
+        tools:layout="@layout/fragment_admin_report" >
+        <argument
+            android:name="idUser"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_adminReportFragment"
+        app:destination="@id/adminReportFragment" />
+    <action
+        android:id="@+id/action_global_adminProfileFragment"
+        app:destination="@id/adminProfileFragment" />
+</navigation>
