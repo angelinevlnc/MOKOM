@@ -16,9 +16,9 @@ class LoginActivity : AppCompatActivity() {
     lateinit var username:TextView
     lateinit var password:TextView
     lateinit var btnLogin:Button
+    lateinit var txtToRegister:TextView
 
     private lateinit var db: AppDatabase
-    private lateinit var user: ArrayList<UserEntity>
     private val coroutine = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,21 +28,17 @@ class LoginActivity : AppCompatActivity() {
         username = findViewById(R.id.editLoginUsername)
         password = findViewById(R.id.editLoginPassword)
         btnLogin = findViewById(R.id.btnLogin)
+        txtToRegister = findViewById(R.id.txtToRegister)
 
+        //openOrCreateDatabase("chastethrift", MODE_PRIVATE, null)
         db = AppDatabase.build(this)
-        user = ArrayList()
-        coroutine.launch {
-            val tmpUser = db.userDao().fetch()
-            user.clear()
-            user.addAll(tmpUser)
-        }
 
         btnLogin.setOnClickListener {
             if (username.text.toString().isNotEmpty() && password.text.toString().isNotEmpty()) {
                 coroutine.launch(Dispatchers.IO) {
                     val user = db.userDao().cek(username.text.toString(), password.text.toString())
                     withContext(Dispatchers.Main) {
-                        if (user != null) {
+                        if (user.isNotEmpty()) {
                             val cek = user.first().role
                             val idUser = user.first().id_user!!
                             navigateToMainActivity(cek, idUser)
@@ -55,13 +51,19 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "Semua inputan harus diisi!", Toast.LENGTH_SHORT).show()
             }
         }
+
+        txtToRegister.setOnClickListener{
+            val intent2 = Intent(this, RegisterActivity::class.java)
+            startActivity(intent2)
+            finish()
+        }
     }
     private fun navigateToMainActivity(cek: Int, idUser: Int) {
         when (cek) {
             0 -> Toast.makeText(this, "Username atau password salah!", Toast.LENGTH_SHORT).show()
             1 -> navigateTo(MainActivityPenjual::class.java, idUser)
             2 -> navigateTo(MainActivity::class.java, idUser)
-            3 -> navigateTo(MainActivity::class.java, idUser) // Nanti diganti utk ke admin
+            3 -> navigateTo(MainActivityAdmin::class.java, idUser)
         }
     }
     private fun navigateTo(destination: Class<*>, idUser: Int) {

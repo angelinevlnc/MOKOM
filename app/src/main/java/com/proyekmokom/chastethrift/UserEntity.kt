@@ -13,7 +13,7 @@ import androidx.room.PrimaryKey
 data class UserEntity (
     @PrimaryKey
     @ColumnInfo(name = "id_user") val id_user:Int?, // ? artinya boleh NULL
-    @ColumnInfo(name = "gambar") val gambar:Int,
+    @ColumnInfo(name = "gambar") val gambar:Int? = null, // Gambar awal register NULL
     @ColumnInfo(name = "username") val username:String,
     @ColumnInfo(name = "password") val password:String,
     @ColumnInfo(name = "role") val role:Int, // 1 = penjual; 2 = pembeli; 3 = admin
