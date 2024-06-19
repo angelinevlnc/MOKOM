@@ -23,6 +23,9 @@ interface ItemDao {
     @Query("SELECT * FROM item")
     fun fetch():List<ItemEntity>
 
+    @Query("SELECT * FROM item WHERE id_item = :id_item")
+    fun itemById(id_item: Int): ItemEntity
+
     @Query("SELECT * FROM item where id_user = :id_user")
     fun searchIdUser(id_user:Int):List<ItemEntity> //cari berdasarkan ID User
 
@@ -31,9 +34,6 @@ interface ItemDao {
 
     @Query("SELECT * FROM item where harga <= :harga AND harga >= :harga")
     fun searchHarga(harga:Int):List<ItemEntity> //cari berdasarkan harga (dalam range harga)
-
-    @Query("SELECT * FROM item where kategori = :kategori")
-    fun searchKategori(kategori:String):List<ItemEntity> //cari berdasarkan kategori
 
     @Query("SELECT * FROM item where brand = :brand")
     fun searchBrand(brand:String):List<ItemEntity> //cari berdasarkan brand

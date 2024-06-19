@@ -58,7 +58,7 @@ class PenjualAddFragment : Fragment() {
             db = AppDatabase.build(requireContext())
 
             coroutine.launch(Dispatchers.IO) {
-                val item = ItemEntity(idUser, idUser, "https://awsimages.detik.net.id/community/media/visual/2022/11/07/kasus-kucing-mati-dilempar-batu-di-jakarta-kronologi-hingga-penyebab-1.jpeg?w=1200", title, price, description, "kategori", brand, size, null,1)
+                val item = ItemEntity(null, idUser, "https://awsimages.detik.net.id/community/media/visual/2022/11/07/kasus-kucing-mati-dilempar-batu-di-jakarta-kronologi-hingga-penyebab-1.jpeg?w=1200", title, price, description, brand, size, null,1)
                 db.itemDao().insert(item)
 
                 withContext(Dispatchers.Main) {

@@ -46,7 +46,7 @@ class PenjualCatalogFragment : Fragment() {
         itemList = ArrayList()
         rvCatalog.layoutManager = LinearLayoutManager(requireContext(),
             LinearLayoutManager.VERTICAL, false)
-        rvCatalogAdapter = RvCatalogAdapter(itemList)
+        rvCatalogAdapter = RvCatalogAdapter(itemList){}
         rvCatalog.adapter = rvCatalogAdapter
 
         coroutine.launch(Dispatchers.IO) {

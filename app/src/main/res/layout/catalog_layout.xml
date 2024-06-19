@@ -8,6 +8,7 @@
 
     <!-- Gambar atau konten untuk item 1 -->
     <LinearLayout
+        android:id="@+id/layout_1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -38,6 +39,7 @@
 
     <!-- Gambar atau konten untuk item 2 -->
     <LinearLayout
+        android:id="@+id/layout_2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

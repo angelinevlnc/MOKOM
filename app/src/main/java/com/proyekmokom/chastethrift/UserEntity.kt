@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "user")
 data class UserEntity (
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id_user") val id_user:Int?, // ? artinya boleh NULL
     @ColumnInfo(name = "gambar") val gambar:Int? = null, // Gambar awal register NULL
     @ColumnInfo(name = "username") val username:String,

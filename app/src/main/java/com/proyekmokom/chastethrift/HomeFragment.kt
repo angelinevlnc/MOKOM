@@ -1,5 +1,6 @@
 package com.proyekmokom.chastethrift
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -53,7 +54,13 @@ class HomeFragment : Fragment() {
         itemList = ArrayList()
         rvCatalog.layoutManager = LinearLayoutManager(requireContext(),
             LinearLayoutManager.VERTICAL, false)
-        rvCatalogAdapter = RvCatalogAdapter(itemList)
+        rvCatalogAdapter = RvCatalogAdapter(itemList) { itemId: Int? ->
+            if (itemId != null){
+                val intent = Intent(requireActivity(), DetailActivity::class.java)
+                intent.putExtra("item_id", itemId)
+                startActivity(intent)
+            }
+        }
         rvCatalog.adapter = rvCatalogAdapter
 
         coroutine.launch(Dispatchers.IO) {

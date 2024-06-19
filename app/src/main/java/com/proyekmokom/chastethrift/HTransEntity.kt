@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "htrans")
 data class HTransEntity (
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id_htrans") val id_htrans:Int?, // ? artinya boleh NULL
     @ColumnInfo(name = "id_penjual") val id_penjual:Int,
     @ColumnInfo(name = "id_pembeli") val id_pembeli:Int,
