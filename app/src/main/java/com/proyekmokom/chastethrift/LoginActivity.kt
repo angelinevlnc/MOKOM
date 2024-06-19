@@ -42,6 +42,9 @@ class LoginActivity : AppCompatActivity() {
                             val cek = user.first().role
                             val idUser = user.first().id_user!!
                             navigateToMainActivity(cek, idUser)
+
+                            // Tambahkan User Id ke LoginViewModel
+                            LoginViewModel.login_user_id = idUser;
                         } else {
                             Toast.makeText(this@LoginActivity, "Username atau password salah!", Toast.LENGTH_SHORT).show()
                         }

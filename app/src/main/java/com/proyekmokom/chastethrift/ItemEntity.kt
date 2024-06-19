@@ -14,7 +14,7 @@ data class ItemEntity (
     @PrimaryKey
     @ColumnInfo(name = "id_item") val id_item:Int?, // ? artinya boleh NULL
     @ColumnInfo(name = "id_user") val id_user:Int, // ID User yg membuat
-    @ColumnInfo(name = "gambar") val gambar:Int,
+    @ColumnInfo(name = "gambar") val gambar:String,
     @ColumnInfo(name = "nama") val nama:String,
     @ColumnInfo(name = "harga") val harga:Int,
     @ColumnInfo(name = "deskripsi") val deskripsi:String?, //boleh NULL

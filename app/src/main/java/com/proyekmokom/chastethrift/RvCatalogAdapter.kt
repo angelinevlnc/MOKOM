@@ -22,7 +22,7 @@ class RvCatalogAdapter(private val itemList: List<ItemEntity>) :
 
         if (index1 < itemList.size) {
             val item1 = itemList[index1]
-            holder.image1.setImageResource(item1.gambar)
+            holder.image1.setImageResource(R.drawable.kucing)
             holder.name1.text = item1.nama
             holder.price1.text = "Rp ${item1.harga}"
             holder.image1.visibility = View.VISIBLE
@@ -36,7 +36,7 @@ class RvCatalogAdapter(private val itemList: List<ItemEntity>) :
 
         if (index2 < itemList.size) {
             val item2 = itemList[index2]
-            holder.image2.setImageResource(item2.gambar)
+            holder.image2.setImageResource(R.drawable.gucci)
             holder.name2.text = item2.nama
             holder.price2.text = "Rp ${item2.harga}"
             holder.image2.visibility = View.VISIBLE
