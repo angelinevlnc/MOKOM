@@ -12,6 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         android:orientation="vertical"
         android:padding="25dp"
         android:scrollbars="vertical">
@@ -20,6 +21,7 @@
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="179dp"
+            android:layout_marginTop="20sp"
             android:src="@drawable/gucci" />
 
         <TextView
@@ -37,7 +39,7 @@
             android:ems="10"
             android:hint="e.g. Sepatu Nike Oscar"
             android:inputType="text"
-            android:textSize="10sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textView9"
@@ -54,7 +56,7 @@
             android:ems="10"
             android:hint="e.g. Rp 50.000"
             android:inputType="text"
-            android:textSize="10sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textView8"
@@ -73,20 +75,7 @@
             android:ems="10"
             android:hint="e.g. Cuma dipakai sebentar"
             android:inputType="text"
-            android:textSize="10sp" />
-
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Category"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textView11"
@@ -103,7 +92,7 @@
             android:ems="10"
             android:hint="e.g. Nike Official"
             android:inputType="text"
-            android:textSize="10sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textView12"
@@ -120,13 +109,14 @@
             android:ems="10"
             android:hint="e.g. S,M,L"
             android:inputType="text"
-            android:textSize="10sp" />
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/buttonSell"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#75A47F"
+            android:layout_marginTop="20sp"
+            android:backgroundTint="#C65278"
             android:text="Sell" />
     </LinearLayout>
 
