@@ -24,41 +24,42 @@ class RvCatalogAdapter (
         val index1 = position * 2
         val index2 = position * 2 + 1
 
-        val item1 = itemList[index1]
-        val item2 = itemList[index2]
-
         if (index1 < itemList.size) {
-            holder.image1.setImageResource(R.drawable.kucing)
+            val item1 = itemList[index1]
+            holder.image1.setImageResource(R.drawable.kucing) // Or use item1.imageResource if you have image resources in your ItemEntity
             holder.name1.text = item1.nama
             holder.price1.text = "Rp ${item1.harga}"
             holder.image1.visibility = View.VISIBLE
             holder.name1.visibility = View.VISIBLE
             holder.price1.visibility = View.VISIBLE
+
+            holder.layout1.setOnClickListener {
+                toDetail(item1.id_item)
+            }
         } else {
             holder.image1.visibility = View.GONE
             holder.name1.visibility = View.GONE
             holder.price1.visibility = View.GONE
+            holder.layout1.setOnClickListener(null)
         }
 
         if (index2 < itemList.size) {
-            holder.image2.setImageResource(R.drawable.gucci)
+            val item2 = itemList[index2]
+            holder.image2.setImageResource(R.drawable.gucci) // Or use item2.imageResource if you have image resources in your ItemEntity
             holder.name2.text = item2.nama
             holder.price2.text = "Rp ${item2.harga}"
             holder.image2.visibility = View.VISIBLE
             holder.name2.visibility = View.VISIBLE
             holder.price2.visibility = View.VISIBLE
+
+            holder.layout2.setOnClickListener {
+                toDetail(item2.id_item)
+            }
         } else {
             holder.image2.visibility = View.GONE
             holder.name2.visibility = View.GONE
             holder.price2.visibility = View.GONE
-        }
-
-        holder.layout1.setOnClickListener {
-            toDetail(item1.id_item)
-        }
-
-        holder.layout2.setOnClickListener {
-            toDetail(item2.id_item)
+            holder.layout2.setOnClickListener(null)
         }
     }
 

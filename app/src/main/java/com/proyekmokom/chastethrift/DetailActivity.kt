@@ -1,11 +1,14 @@
 package com.proyekmokom.chastethrift
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import com.proyekmokom.chastethrift.MidtransPayment.MidtransGateway
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,6 +22,7 @@ class DetailActivity : AppCompatActivity() {
     lateinit var txtTitle: TextView
     lateinit var txtHarga: TextView
     lateinit var txtDesc: TextView
+    lateinit var btnPurchase: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -48,6 +52,14 @@ class DetailActivity : AppCompatActivity() {
                     txtTitle.text = item!!.nama
                     txtHarga.text = item!!.harga.toString()
                     txtDesc.text = item!!.deskripsi
+                    btnPurchase = findViewById(R.id.btnPurchase)
+
+                    btnPurchase.setOnClickListener {
+                        var i = Intent(baseContext, MidtransGateway::class.java)
+                        i.putExtra("namaBarang", txtTitle.text.toString())
+                        i.putExtra("hargaBarang", txtHarga.text.toString().toInt())
+                        startActivity(i)
+                    }
                 }
             }
         } else {
