@@ -44,7 +44,7 @@
         app:srcCompat="@android:drawable/checkbox_on_background" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnPurchase"
         android:layout_width="310dp"
         android:layout_height="51dp"
         android:backgroundTint="#C65278"
