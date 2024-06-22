@@ -47,7 +47,7 @@ class HomeFragment : Fragment() {
         rvCatalog = view.findViewById(R.id.rvCatalog)
 
         // Retrieve the arguments using Safe Args
-        val args: PenjualCatalogFragmentArgs by navArgs()
+        val args: HomeFragmentArgs by navArgs()
         var idUser:Int = args.idUser
 
         db = AppDatabase.build(requireContext())
@@ -64,7 +64,7 @@ class HomeFragment : Fragment() {
         rvCatalog.adapter = rvCatalogAdapter
 
         coroutine.launch(Dispatchers.IO) {
-            val tmpItemList = db.itemDao().fetch()
+            val tmpItemList = db.itemDao().fetchStatusTrue()
             itemList.clear()
             itemList.addAll(tmpItemList)
             withContext(Dispatchers.Main) {

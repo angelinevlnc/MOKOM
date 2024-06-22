@@ -1,8 +1,10 @@
 package com.proyekmokom.chastethrift
 
 import android.content.Intent
+import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -30,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
         btnLogin = findViewById(R.id.btnLogin)
         txtToRegister = findViewById(R.id.txtToRegister)
 
-        //openOrCreateDatabase("chastethrift", MODE_PRIVATE, null)
+        //openOrCreateDatabase("chastethrift", MODE_PRIVATE, null) //utk paksa buka DB yg closed. Kalo bisa buka tanpa paksa, lebih baik di-comment saja.
         db = AppDatabase.build(this)
 
         btnLogin.setOnClickListener {

@@ -14,6 +14,14 @@
             android:name="idUser"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_penjualCatalogFragment_to_penjualEditFragment"
+            app:destination="@id/penjualEditFragment" >
+            <argument
+                android:name="idItem"
+                app:argType="integer"
+                android:defaultValue="0" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/penjualAddFragment"
@@ -34,6 +42,9 @@
             android:name="idUser"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_penjualProfileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
     </fragment>
     <action
         android:id="@+id/action_global_penjualAddFragment"
@@ -44,4 +55,38 @@
     <action
         android:id="@+id/action_global_penjualProfileFragment"
         app:destination="@id/penjualProfileFragment" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.proyekmokom.chastethrift.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" >
+        <argument
+            android:name="idUser"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="sourceNavGraph"
+            app:argType="string"/>
+        <argument
+            android:name="sourceFragment"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_editProfileFragment_to_penjualProfileFragment"
+            app:destination="@id/penjualProfileFragment">
+            <argument
+                android:name="idUser"
+                app:argType="integer"
+                android:defaultValue="0" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/penjualEditFragment"
+        android:name="com.proyekmokom.chastethrift.PenjualEditFragment"
+        android:label="fragment_penjual_edit"
+        tools:layout="@layout/fragment_penjual_edit" >
+        <argument
+            android:name="idItem"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
 </navigation>

@@ -39,7 +39,6 @@ class MainActivityPenjual : AppCompatActivity() {
                     // Navigasi ke fragment penjual add dgn idUser
                     action = PenjualAddFragmentDirections.actionGlobalPenjualAddFragment(idUser)
                     navController.navigate(action)
-                    navController.navigate(R.id.penjualAddFragment)
                     true
                 }
                 else -> false

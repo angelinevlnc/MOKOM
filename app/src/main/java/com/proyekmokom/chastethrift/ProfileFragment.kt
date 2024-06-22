@@ -1,19 +1,33 @@
 package com.proyekmokom.chastethrift
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class ProfileFragment : Fragment() {
-    lateinit var textView2: TextView
+    lateinit var txtUsernamePembeli: TextView
+    lateinit var txtRolePembeli: TextView
+    lateinit var btnEditProfilePembeli: Button
+    lateinit var btnLogoutPembeli: Button
+    lateinit var imgProfilePembeli: ImageView
+
+    private lateinit var db: AppDatabase
+    private val coroutine = CoroutineScope(Dispatchers.IO)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -27,10 +41,35 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val args: PenjualCatalogFragmentArgs by navArgs()
+        val args: ProfileFragmentArgs by navArgs()
         var idUser:Int = args.idUser
 
-        textView2 = view.findViewById(R.id.textView2)
-        textView2.text = "Welcome pembeli dgn id_user: $idUser"
+        txtUsernamePembeli = view.findViewById(R.id.txtUsernamePembeli)
+        txtRolePembeli = view.findViewById(R.id.txtRolePembeli)
+        btnEditProfilePembeli = view.findViewById(R.id.btnEditProfilePembeli)
+        btnLogoutPembeli = view.findViewById(R.id.btnLogoutPembeli)
+        imgProfilePembeli = view.findViewById(R.id.imgProfilePembeli)
+
+        db = AppDatabase.build(requireContext())
+
+        coroutine.launch(Dispatchers.IO) {
+            var user = db.userDao().searchById(idUser)
+            withContext(Dispatchers.Main) {
+                txtUsernamePembeli.text = user.username
+                imgProfilePembeli.setImageResource(user.gambar)
+            }
+        }
+
+        btnEditProfilePembeli.setOnClickListener {
+            val action = ProfileFragmentDirections
+                .actionProfileFragmentToEditProfileFragment3("nav", "profileFragment",idUser)
+            findNavController().navigate(action)
+        }
+
+        btnLogoutPembeli.setOnClickListener {
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
     }
 }
