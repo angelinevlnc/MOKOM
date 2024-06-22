@@ -14,6 +14,9 @@
             android:name="idUser"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_adminProfileFragment_to_editProfileFragment2"
+            app:destination="@id/editProfileFragment2" />
     </fragment>
     <fragment
         android:id="@+id/adminReportFragment"
@@ -31,4 +34,28 @@
     <action
         android:id="@+id/action_global_adminProfileFragment"
         app:destination="@id/adminProfileFragment" />
+    <fragment
+        android:id="@+id/editProfileFragment2"
+        android:name="com.proyekmokom.chastethrift.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" >
+        <argument
+            android:name="idUser"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="sourceNavGraph"
+            app:argType="string"/>
+        <argument
+            android:name="sourceFragment"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_editProfileFragment2_to_adminProfileFragment"
+            app:destination="@id/adminProfileFragment">
+            <argument
+                android:name="idUser"
+                app:argType="integer"
+                android:defaultValue="0" />
+        </action>
+    </fragment>
 </navigation>

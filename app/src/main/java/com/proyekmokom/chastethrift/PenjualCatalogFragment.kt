@@ -1,5 +1,6 @@
 package com.proyekmokom.chastethrift
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 
 class PenjualCatalogFragment : Fragment() {
@@ -46,11 +48,18 @@ class PenjualCatalogFragment : Fragment() {
         itemList = ArrayList()
         rvCatalog.layoutManager = LinearLayoutManager(requireContext(),
             LinearLayoutManager.VERTICAL, false)
-        rvCatalogAdapter = RvCatalogAdapter(itemList){}
+        rvCatalogAdapter = RvCatalogAdapter(itemList){ itemId: Int? ->
+            if (itemId != null){
+                val action = PenjualCatalogFragmentDirections
+                    .actionPenjualCatalogFragmentToPenjualEditFragment(itemId)
+                findNavController().navigate(action)
+            }
+
+        }
         rvCatalog.adapter = rvCatalogAdapter
 
         coroutine.launch(Dispatchers.IO) {
-            val tmpItemList = db.itemDao().searchIdUser(idUser)
+            val tmpItemList = db.itemDao().searchIdUserAndStatusTrue(idUser)
             itemList.clear()
             itemList.addAll(tmpItemList)
             withContext(Dispatchers.Main) {

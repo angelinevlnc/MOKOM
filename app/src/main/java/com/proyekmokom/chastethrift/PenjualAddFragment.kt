@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,12 +34,17 @@ class PenjualAddFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_penjual_add, container, false)
+        val view = inflater.inflate(R.layout.fragment_penjual_add, container, false)
+
+        return view
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val args: PenjualAddFragmentArgs by navArgs()
+        var idUser:Int = args.idUser
 
         buttonSell = view.findViewById(R.id.buttonSell)
         textTitle = view.findViewById(R.id.textTitle)
@@ -50,10 +56,10 @@ class PenjualAddFragment : Fragment() {
         buttonSell.setOnClickListener(){
             val title = textTitle.text.toString()
             val price = textPrice.text.toString().toInt()
-            val description = textPrice.text.toString()
+            val description = textDescription.text.toString()
             val brand = textBrand.text.toString()
             val size = textSize.text.toString()
-            val idUser = LoginViewModel.login_user_id
+            //val idUser = LoginViewModel.login_user_id //ini hasil idUser -1 terus, mungkin krn login-nya auto dari hlm Register?
 
             db = AppDatabase.build(requireContext())
 
@@ -63,7 +69,11 @@ class PenjualAddFragment : Fragment() {
 
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "Berhasil Tambah", Toast.LENGTH_SHORT).show()
+
                     //Pindah ke fragment lain
+                    val action = PenjualAddFragmentDirections
+                        .actionGlobalPenjualCatalogFragment(idUser)
+                    findNavController().navigate(action)
                 }
             }
         }
