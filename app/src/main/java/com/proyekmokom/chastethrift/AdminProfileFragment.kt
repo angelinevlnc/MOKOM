@@ -2,6 +2,7 @@ package com.proyekmokom.chastethrift
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -37,7 +38,7 @@ class AdminProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val args: AdminProfileFragmentArgs by navArgs()
-        var idUser:Int = args.idUser
+        val idUser: Int = args.idUser
 
         txtUsernameAdmin = view.findViewById(R.id.txtUsernameAdmin)
         txtRoleAdmin = view.findViewById(R.id.txtRoleAdmin)
@@ -48,16 +49,32 @@ class AdminProfileFragment : Fragment() {
         db = AppDatabase.build(requireContext())
 
         coroutine.launch(Dispatchers.IO) {
-            var user = db.userDao().searchById(idUser)
-            withContext(Dispatchers.Main) {
-                txtUsernameAdmin.text = user.username
-                imgProfileAdmin.setImageResource(user.gambar)
+            try {
+                val user = db.userDao().searchById(idUser)
+                if (user != null) {
+                    withContext(Dispatchers.Main) {
+                        txtUsernameAdmin.text = user.username
+                        imgProfileAdmin.setImageResource(user.gambar)
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Log.e("AdminProfileFragment", "User not found with id: $idUser")
+                        txtUsernameAdmin.text = "User not found"
+                        imgProfileAdmin.setImageResource(R.drawable.ic_profile)
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("AdminProfileFragment", "Error fetching user: ${e.message}")
+                    txtUsernameAdmin.text = "Error loading user"
+                    imgProfileAdmin.setImageResource(R.drawable.ic_profile)
+                }
             }
         }
 
         btnEditProfileAdmin.setOnClickListener {
             val action = AdminProfileFragmentDirections
-                .actionAdminProfileFragmentToEditProfileFragment2("nav_admin", "adminProfileFragment",idUser)
+                .actionAdminProfileFragmentToEditProfileFragment2("nav_admin", "adminProfileFragment", idUser)
             findNavController().navigate(action)
         }
 
@@ -67,4 +84,5 @@ class AdminProfileFragment : Fragment() {
             requireActivity().finish()
         }
     }
+
 }
