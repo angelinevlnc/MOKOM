@@ -19,9 +19,16 @@
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="179dp"
+            android:layout_height="200dp"
             android:layout_marginTop="20sp"
-            android:src="@drawable/gucci" />
+            android:src="@drawable/baseline_camera_alt_24" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Upload Foto Produk"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="20dp"/>
 
         <TextView
             android:id="@+id/textView6"
@@ -110,11 +117,18 @@
             android:inputType="text"
             android:textSize="14sp" />
 
-        <ImageView
-            android:id="@+id/imageView8"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:src="@tools:sample/avatars" />
+            android:text="Upload Sertifikat"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <ImageView
+            android:id="@+id/sertifikatImageView"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:src="@drawable/baseline_camera_alt_24" />
 
         <Button
             android:id="@+id/buttonSell"

@@ -36,7 +36,9 @@ class PenjualAddFragment : Fragment() {
     lateinit var textSize : TextView
 
     lateinit var imageView: ImageView
-    var currentImageUri: Uri? = null
+    lateinit var sertifikatImageView: ImageView
+    var produkImageUri: Uri? = null
+    var sertifikatImageUri: Uri? = null
 
     private fun allPermissionsGranted() =
         ContextCompat.checkSelfPermission(
@@ -78,6 +80,7 @@ class PenjualAddFragment : Fragment() {
         textSize = view.findViewById(R.id.textSize)
 
         imageView = view.findViewById(R.id.imageView)
+        sertifikatImageView = view.findViewById(R.id.sertifikatImageView)
 
         buttonSell.setOnClickListener(){
             val title = textTitle.text.toString()
@@ -85,7 +88,6 @@ class PenjualAddFragment : Fragment() {
             val description = textDescription.text.toString()
             val brand = textBrand.text.toString()
             val size = textSize.text.toString()
-            //val idUser = LoginViewModel.login_user_id //ini hasil idUser -1 terus, mungkin krn login-nya auto dari hlm Register?
 
             db = AppDatabase.build(requireContext())
 
@@ -112,22 +114,34 @@ class PenjualAddFragment : Fragment() {
 
         imageView.setOnClickListener {
             val intent = Intent(requireActivity(), CameraActivity::class.java)
-            launcherIntentCameraX.launch(intent)
+            launcherProdukIntentCameraX.launch(intent)
+        }
+
+        sertifikatImageView.setOnClickListener {
+            val intent = Intent(requireActivity(), CameraActivity::class.java)
+            launcherSertifikatIntentCameraX.launch(intent)
         }
     }
 
-    private val launcherIntentCameraX = registerForActivityResult(
+    private val launcherProdukIntentCameraX = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
         if (it.resultCode == 200) {
-            currentImageUri = it.data?.getStringExtra("CAMERAX_PHOTO")?.toUri()
-            showImage()
+            produkImageUri = it.data?.getStringExtra("CAMERAX_PHOTO")?.toUri()
+            produkImageUri?.let {
+                imageView.setImageURI(it)
+            }
         }
     }
 
-    private fun showImage(){
-        currentImageUri?.let {
-            imageView.setImageURI(it)
+    private val launcherSertifikatIntentCameraX = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == 200) {
+            sertifikatImageUri = it.data?.getStringExtra("CAMERAX_PHOTO")?.toUri()
+            sertifikatImageUri?.let {
+                sertifikatImageView.setImageURI(it)
+            }
         }
     }
 
