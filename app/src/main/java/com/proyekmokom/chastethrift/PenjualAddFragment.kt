@@ -1,21 +1,27 @@
 package com.proyekmokom.chastethrift
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 
 class PenjualAddFragment : Fragment() {
 
@@ -29,16 +35,34 @@ class PenjualAddFragment : Fragment() {
     lateinit var textBrand : TextView
     lateinit var textSize : TextView
 
+    lateinit var imageView: ImageView
+    var currentImageUri: Uri? = null
+
+    private fun allPermissionsGranted() =
+        ContextCompat.checkSelfPermission(
+            requireContext(),
+            REQUIRED_PERMISSION
+        ) == PackageManager.PERMISSION_GRANTED
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                Toast.makeText(requireContext(), "Permission request granted", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(requireContext(), "Permission request denied", Toast.LENGTH_LONG).show()
+            }
+        }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_penjual_add, container, false)
-
         return view
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,6 +76,8 @@ class PenjualAddFragment : Fragment() {
         textDescription = view.findViewById(R.id.textDescription)
         textBrand = view.findViewById(R.id.textBrand)
         textSize = view.findViewById(R.id.textSize)
+
+        imageView = view.findViewById(R.id.imageView)
 
         buttonSell.setOnClickListener(){
             val title = textTitle.text.toString()
@@ -77,5 +103,35 @@ class PenjualAddFragment : Fragment() {
                 }
             }
         }
+
+        // Camera Related
+        // Request camera permissions
+        if (!allPermissionsGranted()) {
+            requestPermissionLauncher.launch(REQUIRED_PERMISSION)
+        }
+
+        imageView.setOnClickListener {
+            val intent = Intent(requireActivity(), CameraActivity::class.java)
+            launcherIntentCameraX.launch(intent)
+        }
+    }
+
+    private val launcherIntentCameraX = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == 200) {
+            currentImageUri = it.data?.getStringExtra("CAMERAX_PHOTO")?.toUri()
+            showImage()
+        }
+    }
+
+    private fun showImage(){
+        currentImageUri?.let {
+            imageView.setImageURI(it)
+        }
+    }
+
+    companion object {
+        private const val REQUIRED_PERMISSION = Manifest.permission.CAMERA
     }
 }
