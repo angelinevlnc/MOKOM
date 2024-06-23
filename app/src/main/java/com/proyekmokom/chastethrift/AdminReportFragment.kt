@@ -6,10 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 
 class AdminReportFragment : Fragment() {
+
     lateinit var textView15: TextView
+
+    private val adminReportViewModel: AdminReportViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -26,5 +32,10 @@ class AdminReportFragment : Fragment() {
 
         textView15 = view.findViewById(R.id.textView15)
         textView15.text = "Report Admin -> Nanti pakai API Google Chart. Yg login admin dgn id_user: $idUser"
+
+        adminReportViewModel.ipAddress.observe(viewLifecycleOwner, Observer {
+            textView15.text = "Your Ip Address = ${it}"
+        })
+        adminReportViewModel.fetchIpAddress()
     }
 }

@@ -16,3 +16,8 @@ data class UploadResponse(
 	@field:SerializedName("title")
 	val title: String,
 )
+
+data class IpResponse (
+	@field:SerializedName("ip")
+	val ip: String
+)
