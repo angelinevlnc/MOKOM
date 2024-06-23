@@ -1,5 +1,6 @@
 package com.proyekmokom.chastethrift.MidtransPayment
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +20,12 @@ import com.midtrans.sdk.uikit.api.model.SnapTransactionDetail
 import com.midtrans.sdk.uikit.api.model.TransactionResult
 import com.midtrans.sdk.uikit.external.UiKitApi
 import com.midtrans.sdk.uikit.internal.util.UiKitConstants
+import com.midtrans.sdk.uikit.internal.util.UiKitConstants.STATUS_CANCELED
+import com.midtrans.sdk.uikit.internal.util.UiKitConstants.STATUS_FAILED
+import com.midtrans.sdk.uikit.internal.util.UiKitConstants.STATUS_INVALID
+import com.midtrans.sdk.uikit.internal.util.UiKitConstants.STATUS_PENDING
+import com.midtrans.sdk.uikit.internal.util.UiKitConstants.STATUS_SUCCESS
+import com.proyekmokom.chastethrift.DetailActivity
 import com.proyekmokom.chastethrift.R
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -26,6 +33,52 @@ import java.util.UUID
 
 
 class MidtransGateway : AppCompatActivity() {
+
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result?.resultCode == RESULT_OK) {
+            result.data?.let {
+                val transactionResult = it.getParcelableExtra<TransactionResult>(UiKitConstants.KEY_TRANSACTION_RESULT)
+                Toast.makeText(this,"${transactionResult?.transactionId}", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == RESULT_OK) {
+            val transactionResult = data?.getParcelableExtra<TransactionResult>(
+                UiKitConstants.KEY_TRANSACTION_RESULT
+            )
+            if (transactionResult != null) {
+                when (transactionResult.status) {
+                    STATUS_SUCCESS -> {
+                        Toast.makeText(this, "Transaction Finished. ID: " + transactionResult.transactionId, Toast.LENGTH_LONG).show()
+                        finish()
+                    }
+                    STATUS_PENDING -> {
+                        Toast.makeText(this, "Transaction Pending. ID: " + transactionResult.transactionId, Toast.LENGTH_LONG).show()
+                        finish()
+                    }
+                    STATUS_FAILED -> {
+                        Toast.makeText(this, "Transaction Failed. ID: " + transactionResult.transactionId, Toast.LENGTH_LONG).show()
+                        finish()
+                    }
+                    STATUS_CANCELED -> {
+                        Toast.makeText(this, "Transaction Cancelled", Toast.LENGTH_LONG).show()
+                        finish()
+                    }
+                    STATUS_INVALID -> {
+                        Toast.makeText(this, "Transaction Invalid. ID: " + transactionResult.transactionId, Toast.LENGTH_LONG).show()
+                        finish()
+                    }
+                    else -> {
+                        Toast.makeText(this, "Transaction ID: " + transactionResult.transactionId + ". Message: " + transactionResult.status, Toast.LENGTH_LONG).show()
+                    }
+                }
+            } else {
+                Toast.makeText(this, "Transaction Invalid", Toast.LENGTH_LONG).show()
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_midtrans_gateway)
@@ -54,14 +107,7 @@ class MidtransGateway : AppCompatActivity() {
 
         //TransactionRequest on revamp is included in the startPayment Constructor
 
-        val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result?.resultCode == RESULT_OK) {
-                result.data?.let {
-                    val transactionResult = it.getParcelableExtra<TransactionResult>(UiKitConstants.KEY_TRANSACTION_RESULT)
-                    Toast.makeText(this,"${transactionResult?.transactionId}", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
+
 
         val itemDetails = listOf(ItemDetails("Test01", hargaBarang!!.toDouble(), 1, namaBarang))
 
@@ -77,13 +123,15 @@ class MidtransGateway : AppCompatActivity() {
                 null,
                 null), // Customer Details
             itemDetails, // Item Details
-            CreditCard(false, null,  null, null, null, null, null, null, null, null), // Credit Card
+            CreditCard(true, null,  null, null, null, null, null, null, null, null), // Credit Card
             "customerIdentifier", // User Id
             PaymentCallback(""), // UobEzpayCallback
             GopayPaymentCallback("mysamplesdk://midtrans"), // GopayCallback
             PaymentCallback("mysamplesdk://midtrans"), // ShopeepayCallback
             Expiry( currentDateandTime, Expiry.UNIT_HOUR, 24), // expiry (null: default expiry time)
         )
+
+
     }
 
     fun setLocaleNew(languageCode: String?) {
