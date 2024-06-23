@@ -54,7 +54,7 @@ class HomeFragment : Fragment() {
         itemList = ArrayList()
         rvCatalog.layoutManager = LinearLayoutManager(requireContext(),
             LinearLayoutManager.VERTICAL, false)
-        rvCatalogAdapter = RvCatalogAdapter(itemList) { itemId: Int? ->
+        rvCatalogAdapter = RvCatalogAdapter(itemList, requireContext()) { itemId: Int? ->
             if (itemId != null){
                 val intent = Intent(requireActivity(), DetailActivity::class.java)
                 intent.putExtra("item_id", itemId)

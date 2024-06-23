@@ -9,19 +9,36 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.net.http.HttpException
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
+import androidx.navigation.fragment.findNavController
+import com.proyekmokom.chastethrift.Network.ApiConfig
+import com.proyekmokom.chastethrift.Network.UploadResponse
+import com.proyekmokom.chastethrift.Utils.bitmapToFile
+import com.proyekmokom.chastethrift.Utils.reduceFileImage
+import com.proyekmokom.chastethrift.Utils.uriToFile
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.lang.Exception
 
 class PenjualAddFragment : Fragment() {
 
@@ -83,27 +100,7 @@ class PenjualAddFragment : Fragment() {
         sertifikatImageView = view.findViewById(R.id.sertifikatImageView)
 
         buttonSell.setOnClickListener(){
-            val title = textTitle.text.toString()
-            val price = textPrice.text.toString().toInt()
-            val description = textDescription.text.toString()
-            val brand = textBrand.text.toString()
-            val size = textSize.text.toString()
-
-            db = AppDatabase.build(requireContext())
-
-            coroutine.launch(Dispatchers.IO) {
-                val item = ItemEntity(null, idUser, "https://awsimages.detik.net.id/community/media/visual/2022/11/07/kasus-kucing-mati-dilempar-batu-di-jakarta-kronologi-hingga-penyebab-1.jpeg?w=1200", title, price, description, brand, size, null,1)
-                db.itemDao().insert(item)
-
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Berhasil Tambah", Toast.LENGTH_SHORT).show()
-
-                    //Pindah ke fragment lain
-                    val action = PenjualAddFragmentDirections
-                        .actionGlobalPenjualCatalogFragment(idUser)
-                    findNavController().navigate(action)
-                }
-            }
+            addData(idUser)
         }
 
         // Camera Related
@@ -141,6 +138,89 @@ class PenjualAddFragment : Fragment() {
             sertifikatImageUri = it.data?.getStringExtra("CAMERAX_PHOTO")?.toUri()
             sertifikatImageUri?.let {
                 sertifikatImageView.setImageURI(it)
+            }
+        }
+    }
+
+    private fun addData(idUser: Int) {
+        db = AppDatabase.build(requireContext())
+
+        val title = textTitle.text.toString()
+        val price = textPrice.text.toString().toInt()
+        val description = textDescription.text.toString()
+        val brand = textBrand.text.toString()
+        val size = textSize.text.toString()
+
+        // Upload Gambar Produk
+//        produkImageUri?.let { uri ->
+//            val produkFile = uriToFile(uri, requireContext()).reduceFileImage()
+//            Log.e("IMAGE_FILE", "show Image: ${produkFile.path}")
+//            var name = title
+//            var type = "produk"
+//
+//            var requestBodyTitle = title.toRequestBody("text/plain".toMediaType())
+//            var requestBodyType = type.toRequestBody("text/plain".toMediaType())
+//            var requestImageFile = produkFile.asRequestBody("image/jpeg".toMediaType())
+//            val multipartBody = MultipartBody.Part.createFormData(
+//                "photo",
+//                produkFile.name,
+//                requestImageFile
+//            )
+//
+//            try {
+//                val client = ApiConfig.getApiService().uploadImageBasic(
+//                    tipe = requestBodyType,
+//                    title = requestBodyTitle,
+//                    files = multipartBody
+//                )
+//                client.enqueue(object: Callback<UploadResponse> {
+//                    override fun onResponse(
+//                        call: Call<UploadResponse>,
+//                        response: Response<UploadResponse>
+//                    ) {
+//                        if (response.isSuccessful){
+//                            Toast.makeText(requireContext(), response.message(), Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
+//
+//                    override fun onFailure(call: Call<UploadResponse>, t: Throwable) {
+//
+//                    }
+//                })
+//
+//            } catch (ex: Exception) {
+//                Toast.makeText(requireContext(), ex.localizedMessage, Toast.LENGTH_SHORT).show()
+//                Log.e("ERROR", ex.localizedMessage)
+//            }
+//        }
+
+
+        coroutine.launch(Dispatchers.IO) {
+            try {
+                val item = ItemEntity(
+                    null,
+                    idUser,
+                    "https://awsimages.detik.net.id/community/media/visual/2022/11/07/kasus-kucing-mati-dilempar-batu-di-jakarta-kronologi-hingga-penyebab-1.jpeg?w=1200",
+                    title,
+                    price,
+                    description,
+                    brand,
+                    size,
+                    null,
+                    1
+                )
+                db.itemDao().insert(item)
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Berhasil Tambah", Toast.LENGTH_SHORT).show()
+
+                    //Pindah ke fragment lain
+                    val action = PenjualAddFragmentDirections
+                        .actionGlobalPenjualCatalogFragment(idUser)
+                    findNavController().navigate(action)
+                }
+            } catch (e: Exception) {
+
             }
         }
     }

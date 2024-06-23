@@ -48,7 +48,7 @@ class PenjualCatalogFragment : Fragment() {
         itemList = ArrayList()
         rvCatalog.layoutManager = LinearLayoutManager(requireContext(),
             LinearLayoutManager.VERTICAL, false)
-        rvCatalogAdapter = RvCatalogAdapter(itemList){ itemId: Int? ->
+        rvCatalogAdapter = RvCatalogAdapter(itemList, requireContext()){ itemId: Int? ->
             if (itemId != null){
                 val action = PenjualCatalogFragmentDirections
                     .actionPenjualCatalogFragmentToPenjualEditFragment(itemId)

@@ -1,5 +1,6 @@
 package com.proyekmokom.chastethrift
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,9 +8,11 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 class RvCatalogAdapter (
     private val itemList: List<ItemEntity>,
+    private val context: Context,
     var toDetail: (id: Int?) -> Unit
 ) :
     RecyclerView.Adapter<RvCatalogAdapter.ViewHolder>() {
@@ -26,7 +29,10 @@ class RvCatalogAdapter (
 
         if (index1 < itemList.size) {
             val item1 = itemList[index1]
-            holder.image1.setImageResource(R.drawable.kucing) // Or use item1.imageResource if you have image resources in your ItemEntity
+
+            Glide.with(context).load(item1.gambar).into(holder.image1)
+
+//            holder.image1.setImageResource(R.drawable.kucing) // Or use item1.imageResource if you have image resources in your ItemEntity
             holder.name1.text = item1.nama
             holder.price1.text = "Rp ${item1.harga}"
             holder.image1.visibility = View.VISIBLE
@@ -45,7 +51,10 @@ class RvCatalogAdapter (
 
         if (index2 < itemList.size) {
             val item2 = itemList[index2]
-            holder.image2.setImageResource(R.drawable.gucci) // Or use item2.imageResource if you have image resources in your ItemEntity
+
+            Glide.with(context).load(item2.gambar).into(holder.image1)
+
+//            holder.image2.setImageResource(R.drawable.gucci) // Or use item2.imageResource if you have image resources in your ItemEntity
             holder.name2.text = item2.nama
             holder.price2.text = "Rp ${item2.harga}"
             holder.image2.visibility = View.VISIBLE

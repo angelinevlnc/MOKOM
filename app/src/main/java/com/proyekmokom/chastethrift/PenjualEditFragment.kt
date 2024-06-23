@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,6 +31,7 @@ class PenjualEditFragment : Fragment() {
     lateinit var textDescriptionEdit : TextView
     lateinit var textBrandEdit : TextView
     lateinit var textSizeEdit : TextView
+    lateinit var imgViewEdit : ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,6 +57,8 @@ class PenjualEditFragment : Fragment() {
         textDescriptionEdit = view.findViewById(R.id.textDescriptionEdit)
         textBrandEdit = view.findViewById(R.id.textBrandEdit)
         textSizeEdit = view.findViewById(R.id.textSizeEdit)
+        imgViewEdit = view.findViewById(R.id.imageViewEdit)
+
 
         coroutine.launch(Dispatchers.IO) {
             val nowItem = db.itemDao().itemById(idItem)
@@ -63,6 +68,8 @@ class PenjualEditFragment : Fragment() {
                 textDescriptionEdit.text = nowItem.deskripsi
                 textBrandEdit.text = nowItem.brand
                 textSizeEdit.text = nowItem.size
+
+                Glide.with(requireContext()).load(nowItem.gambar).into(imgViewEdit)
             }
         }
 
@@ -78,7 +85,7 @@ class PenjualEditFragment : Fragment() {
 
             coroutine.launch(Dispatchers.IO) {
                 val currentItem = db.itemDao().itemById(idItem)
-                val newItem = ItemEntity(currentItem.id_item, currentItem.id_user, "https://awsimages.detik.net.id/community/media/visual/2022/11/07/kasus-kucing-mati-dilempar-batu-di-jakarta-kronologi-hingga-penyebab-1.jpeg?w=1200", title, price, description, brand, size, currentItem.asli,currentItem.status)
+                val newItem = ItemEntity(currentItem.id_item, currentItem.id_user, "https://awsimages.detik.net.id/community/media/visual/2022/11/07/kasus-kucing-mati-dilempar-batu-di-jakarta-kronologi-hingga-penyebab-1.jpeg?w=1200", title, price, description, brand, size, currentItem.asli, currentItem.status)
                 db.itemDao().update(newItem)
 
                 withContext(Dispatchers.Main) {

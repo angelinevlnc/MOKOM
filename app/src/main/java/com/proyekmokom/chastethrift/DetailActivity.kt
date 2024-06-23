@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.proyekmokom.chastethrift.MidtransPayment.MidtransGateway
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,9 +25,18 @@ class DetailActivity : AppCompatActivity() {
     lateinit var txtHarga: TextView
     lateinit var txtDesc: TextView
     lateinit var btnPurchase: Button
+    lateinit var imgView: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
+
+        //Isi semua yang berhubungan dengan UI disini!
+        txtTitle = findViewById(R.id.txtTitle)
+        txtHarga = findViewById(R.id.txtHarga)
+        txtDesc = findViewById(R.id.txtDesc)
+        imgView = findViewById(R.id.imageView2)
+        btnPurchase = findViewById(R.id.btnPurchase)
 
         db = AppDatabase.build(this)
 
@@ -44,15 +55,11 @@ class DetailActivity : AppCompatActivity() {
                 }
 
                 withContext(Dispatchers.Main) {
-                    //Isi semua yang berhubungan dengan UI disini!
-                    txtTitle = findViewById(R.id.txtTitle)
-                    txtHarga = findViewById(R.id.txtHarga)
-                    txtDesc = findViewById(R.id.txtDesc)
+                    Glide.with(applicationContext).load(item?.gambar).into(imgView)
 
                     txtTitle.text = item!!.nama
                     txtHarga.text = item!!.harga.toString()
                     txtDesc.text = item!!.deskripsi
-                    btnPurchase = findViewById(R.id.btnPurchase)
 
                     btnPurchase.setOnClickListener {
                         var i = Intent(baseContext, MidtransGateway::class.java)
@@ -66,6 +73,5 @@ class DetailActivity : AppCompatActivity() {
             Toast.makeText(this, "Item tidak ditemukan", Toast.LENGTH_SHORT).show()
             finish()
         }
-
     }
 }
