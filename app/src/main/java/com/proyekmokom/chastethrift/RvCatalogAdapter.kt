@@ -52,7 +52,7 @@ class RvCatalogAdapter (
         if (index2 < itemList.size) {
             val item2 = itemList[index2]
 
-            Glide.with(context).load(item2.gambar).into(holder.image1)
+            Glide.with(context).load(item2.gambar).into(holder.image2)
 
 //            holder.image2.setImageResource(R.drawable.gucci) // Or use item2.imageResource if you have image resources in your ItemEntity
             holder.name2.text = item2.nama

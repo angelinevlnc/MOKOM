@@ -206,7 +206,7 @@ class PenjualAddFragment : Fragment() {
                     description,
                     brand,
                     size,
-                    null,
+                    0,
                     1
                 )
                 db.itemDao().insert(item)

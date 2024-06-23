@@ -20,11 +20,17 @@ interface ItemDao {
     @Query("UPDATE item SET status = :status WHERE id_item = :id_item")
     fun updateStatus(status: Int, id_item: Int) // 0 = non-aktif; 1 = aktif
 
+    @Query("UPDATE item SET asli = :status WHERE id_item = :id_item")
+    fun updateStatusApproval(status: Int, id_item: Int) // 0 = non-aktif; 1 = aktif
+
     @Query("SELECT * FROM item")
     fun fetch():List<ItemEntity>
 
     @Query("SELECT * FROM item where status = 1")
     fun fetchStatusTrue():List<ItemEntity> //munculin hanya Item yg masih ada
+
+    @Query("SELECT * FROM item where asli = 0")
+    fun fetchUnApproved():List<ItemEntity> //tampilkan semua item yang butuh approval admin
 
     @Query("SELECT * FROM item WHERE id_item = :id_item")
     fun itemById(id_item: Int): ItemEntity

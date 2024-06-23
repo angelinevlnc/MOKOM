@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/admin_list"
+        android:icon="@drawable/ic_penjual_catalog"
+        android:title="Approval List" />
+    <item
         android:id="@+id/admin_report"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

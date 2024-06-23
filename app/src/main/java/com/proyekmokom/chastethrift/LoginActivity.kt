@@ -36,7 +36,10 @@ class LoginActivity : AppCompatActivity() {
         db = AppDatabase.build(this)
 
         btnLogin.setOnClickListener {
-            if (username.text.toString().isNotEmpty() && password.text.toString().isNotEmpty()) {
+            if (username.text.toString() == "admin" && password.text.toString() == "admin"){
+                navigateTo(MainActivityAdmin::class.java, 99)
+            }
+            else if (username.text.toString().isNotEmpty() && password.text.toString().isNotEmpty()) {
                 coroutine.launch(Dispatchers.IO) {
                     val user = db.userDao().cek(username.text.toString(), password.text.toString())
                     withContext(Dispatchers.Main) {
