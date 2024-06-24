@@ -10,12 +10,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.lifecycle.Observer
 
 class AdminProfileFragment : Fragment() {
     lateinit var txtUsernameAdmin: TextView
@@ -24,8 +22,10 @@ class AdminProfileFragment : Fragment() {
     lateinit var btnLogoutAdmin: Button
     lateinit var imgProfileAdmin: ImageView
 
-    private lateinit var db: AppDatabase
-    private val coroutine = CoroutineScope(Dispatchers.IO)
+    private val viewModel: AdminProfileViewModel by viewModels {
+        AdminProfileViewModelFactory(AppDatabase.build(requireContext()))
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,7 +38,7 @@ class AdminProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val args: AdminProfileFragmentArgs by navArgs()
-        val idUser: Int = args.idUser
+        var idUser = args.idUser
 
         txtUsernameAdmin = view.findViewById(R.id.txtUsernameAdmin)
         txtRoleAdmin = view.findViewById(R.id.txtRoleAdmin)
@@ -46,35 +46,20 @@ class AdminProfileFragment : Fragment() {
         btnLogoutAdmin = view.findViewById(R.id.btnLogoutAdmin)
         imgProfileAdmin = view.findViewById(R.id.imgProfileAdmin)
 
-        db = AppDatabase.build(requireContext())
-
-        coroutine.launch(Dispatchers.IO) {
-            try {
-                val user = db.userDao().searchById(idUser)
-                if (user != null) {
-                    withContext(Dispatchers.Main) {
-                        txtUsernameAdmin.text = user.username
-                        imgProfileAdmin.setImageResource(user.gambar)
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Log.e("AdminProfileFragment", "User not found with id: $idUser")
-                        txtUsernameAdmin.text = "User not found"
-                        imgProfileAdmin.setImageResource(R.drawable.ic_profile)
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Log.e("AdminProfileFragment", "Error fetching user: ${e.message}")
-                    txtUsernameAdmin.text = "Error loading user"
-                    imgProfileAdmin.setImageResource(R.drawable.ic_profile)
-                }
+        viewModel.getUserById(idUser).observe(viewLifecycleOwner, Observer { user ->
+            if (user != null) {
+                txtUsernameAdmin.text = user.username
+                imgProfileAdmin.setImageResource(user.gambar)
+            } else {
+                Log.e("AdminProfileFragment", "User not found with id: ${idUser}")
+                txtUsernameAdmin.text = "User not found"
+                imgProfileAdmin.setImageResource(R.drawable.ic_profile)
             }
-        }
+        })
 
         btnEditProfileAdmin.setOnClickListener {
             val action = AdminProfileFragmentDirections
-                .actionAdminProfileFragmentToEditProfileFragment2("nav_admin", "adminProfileFragment", idUser)
+                .actionAdminProfileFragmentToEditProfileFragment2("nav_admin", "adminProfileFragment", args.idUser)
             findNavController().navigate(action)
         }
 
@@ -84,5 +69,4 @@ class AdminProfileFragment : Fragment() {
             requireActivity().finish()
         }
     }
-
 }

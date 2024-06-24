@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
@@ -25,8 +27,10 @@ class EditProfileFragment : Fragment() {
     lateinit var btnProfileCancelEdit: Button
     lateinit var btnProfileDelete: Button
 
-    private lateinit var db: AppDatabase
-    private val coroutine = CoroutineScope(Dispatchers.IO)
+    private val args: EditProfileFragmentArgs by navArgs()
+    private val viewModel: EditProfileViewModel by viewModels {
+        EditProfileViewModelFactory(AppDatabase.build(requireContext()))
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -51,52 +55,35 @@ class EditProfileFragment : Fragment() {
         btnProfileCancelEdit = view.findViewById(R.id.btnProfileCancelEdit)
         btnProfileDelete = view.findViewById(R.id.btnProfileDelete)
 
-        db = AppDatabase.build(requireContext())
-
-        coroutine.launch(Dispatchers.IO) {
-            var nowUser = db.userDao().searchById(idUser)
-            withContext(Dispatchers.Main) {
-                editProfileUsername.text = nowUser.username
+        viewModel.getUserById(idUser)
+        viewModel.user.observe(viewLifecycleOwner, Observer { user ->
+            if (user != null) {
+                editProfileUsername.text = user.username
             }
-        }
+        })
 
         btnProfileSaveEdit.setOnClickListener {
-            if(editProfileUsername.text.toString().isNotEmpty() && editProfilePassword.text.toString().isNotEmpty() && editProfileConfirmPassword.text.toString().isNotEmpty()){
-                if(editProfilePassword.text.toString() == editProfileConfirmPassword.text.toString()){
+            if (editProfileUsername.text.toString().isNotEmpty() &&
+                editProfilePassword.text.toString().isNotEmpty() &&
+                editProfileConfirmPassword.text.toString().isNotEmpty()) {
+                if (editProfilePassword.text.toString() == editProfileConfirmPassword.text.toString()) {
                     val usernameBaru = editProfileUsername.text.toString()
                     val passwordBaru = editProfilePassword.text.toString()
-                    val passwordLama:String = editPasswordLama.text.toString()
-                    coroutine.launch(Dispatchers.IO) {
-                        var currentUser = db.userDao().searchById(idUser)
-                        if(passwordLama == currentUser.password){
-                            var user = db.userDao().get(usernameBaru)
-                            if (user.isEmpty() || usernameBaru == currentUser.username) {
-                                //UPDATE
-                                db.userDao().updateProfile(usernameBaru,passwordBaru,idUser)
+                    val passwordLama = editPasswordLama.text.toString()
 
-                                //NAVIGATE BACK TO PROFILE OF PENJUAL/PEMBELI/ADMIN
-                                withContext(Dispatchers.Main) {
-//                                    navigateBack(sourceNavGraph, sourceFragment, idUser)
-                                    findNavController().popBackStack()
-                                }
-                            } else {
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(requireContext(), "Username sudah ada!", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                        else{
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(requireContext(), "Password Lama salah!", Toast.LENGTH_SHORT).show()
-                            }
+                    viewModel.user.value?.let { currentUser ->
+                        if (passwordLama == currentUser.password) {
+                            viewModel.updateUserProfile(usernameBaru, passwordBaru, args.idUser)
+//                            navigateBack(sourceNavGraph, sourceFragment, idUser)
+                            findNavController().popBackStack()
+                        } else {
+                            Toast.makeText(requireContext(), "Password Lama salah!", Toast.LENGTH_SHORT).show()
                         }
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(requireContext(), "Password dan Confirm Password harus sama!", Toast.LENGTH_SHORT).show()
                 }
-            }
-            else {
+            } else {
                 Toast.makeText(requireContext(), "Semua inputan harus diisi!", Toast.LENGTH_SHORT).show()
             }
         }
@@ -107,9 +94,7 @@ class EditProfileFragment : Fragment() {
         }
 
         btnProfileDelete.setOnClickListener {
-            coroutine.launch(Dispatchers.IO) {
-                db.userDao().updateStatus(0, idUser)
-            }
+            viewModel.deleteUser(args.idUser)
             val intent = Intent(requireContext(), LoginActivity::class.java)
             startActivity(intent)
             requireActivity().finish()

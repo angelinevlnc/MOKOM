@@ -17,6 +17,9 @@ interface ItemDao {
     @Delete
     fun delete(item:ItemEntity)
 
+    @Query("UPDATE item SET gambar=:gambar, nama=:nama, harga=:harga, deskripsi=:deskripsi, brand=:brand, size=:size WHERE id_item = :id_item")
+    fun updateEdit(gambar:String, nama:String, harga:Int, deskripsi:String?, brand:String?, size:String, id_item: Int) // utk hlm Edit Item penjual
+
     @Query("UPDATE item SET status = :status WHERE id_item = :id_item")
     fun updateStatus(status: Int, id_item: Int) // 0 = non-aktif; 1 = aktif
 

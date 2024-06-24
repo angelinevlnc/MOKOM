@@ -3,6 +3,7 @@ package com.proyekmokom.chastethrift
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
@@ -43,6 +45,10 @@ class AdminApprovalListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rvCatalog = view.findViewById(R.id.rv_admin_approval)
+
+        val args: AdminApprovalListFragmentArgs by navArgs()
+        var idUser = args.idUser
+        Log.e("aaaa","idUser: ${idUser}")
 
         db = AppDatabase.build(requireContext())
         itemList = arrayListOf()

@@ -40,12 +40,6 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(action)
                     true
                 }
-                R.id.menu_cart -> {
-                    // Navigasi ke fragment cart dgn idUser
-                    action = CartFragmentDirections.actionGlobalCartFragment(idUser)
-                    navController.navigate(action)
-                    true
-                }
                 else -> false
             }
         }

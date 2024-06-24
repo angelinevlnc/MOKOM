@@ -6,16 +6,6 @@
     app:startDestination="@id/homeFragment">
 
     <fragment
-        android:id="@+id/cartFragment"
-        android:name="com.proyekmokom.chastethrift.CartFragment"
-        android:label="fragment_cart"
-        tools:layout="@layout/fragment_cart" >
-        <argument
-            android:name="idUser"
-            app:argType="integer"
-            android:defaultValue="0" />
-    </fragment>
-    <fragment
         android:id="@+id/profileFragment"
         android:name="com.proyekmokom.chastethrift.ProfileFragment"
         android:label="fragment_profile"
@@ -33,9 +23,6 @@
         android:name="com.proyekmokom.chastethrift.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_homeFragment_to_cartFragment"
-            app:destination="@id/cartFragment" />
         <argument
             android:name="idUser"
             app:argType="integer"
@@ -43,7 +30,6 @@
     </fragment>
     <action android:id="@+id/action_global_homeFragment" app:destination="@id/homeFragment" />
     <action android:id="@+id/action_global_profileFragment" app:destination="@id/profileFragment" />
-    <action android:id="@+id/action_global_cartFragment" app:destination="@id/cartFragment" />
     <fragment
         android:id="@+id/editProfileFragment3"
         android:name="com.proyekmokom.chastethrift.EditProfileFragment"

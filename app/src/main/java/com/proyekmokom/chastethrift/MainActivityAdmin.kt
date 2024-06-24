@@ -20,7 +20,7 @@ class MainActivityAdmin : AppCompatActivity() {
 //        var action = AdminReportFragmentDirections.actionGlobalAdminReportFragment(idUser)
 //        navController.navigate(action)
 
-        var action = AdminApprovalListFragmentDirections.actionGlobalAdminApprovalListFragment()
+        var action = AdminApprovalListFragmentDirections.actionGlobalAdminApprovalListFragment(idUser)
         navController.navigate(action)
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_admin)
@@ -39,7 +39,7 @@ class MainActivityAdmin : AppCompatActivity() {
                     true
                 }
                 R.id.admin_list -> {
-                    navController.navigate(AdminApprovalListFragmentDirections.actionGlobalAdminApprovalListFragment())
+                    navController.navigate(AdminApprovalListFragmentDirections.actionGlobalAdminApprovalListFragment(idUser))
                     true
                 }
 
