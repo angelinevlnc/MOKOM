@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -26,6 +27,9 @@ class DetailActivity : AppCompatActivity() {
     lateinit var txtDesc: TextView
     lateinit var btnPurchase: Button
     lateinit var imgView: ImageView
+    lateinit var imgView3: ImageView
+    lateinit var textView21: TextView
+    lateinit var btnCancelPurchase: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +41,9 @@ class DetailActivity : AppCompatActivity() {
         txtDesc = findViewById(R.id.txtDesc)
         imgView = findViewById(R.id.imageView2)
         btnPurchase = findViewById(R.id.btnPurchase)
+        imgView3 = findViewById(R.id.imageView3)
+        textView21 = findViewById(R.id.textView21)
+        btnCancelPurchase = findViewById(R.id.btnCancelPurchase)
 
         db = AppDatabase.build(this)
 
@@ -60,6 +67,14 @@ class DetailActivity : AppCompatActivity() {
                     txtTitle.text = item!!.nama
                     txtHarga.text = item!!.harga.toString()
                     txtDesc.text = item!!.deskripsi
+                    if(item!!.asli == -1){
+                        imgView3.visibility = View.GONE
+                        textView21.text = "Not Authentic"
+                    }
+                    else if(item!!.asli != -1 && item!!.asli != 1){
+                        imgView3.visibility = View.GONE
+                        textView21.text = "?? Authenticity"
+                    }
 
                     btnPurchase.setOnClickListener {
                         var i = Intent(baseContext, MidtransGateway::class.java)
@@ -71,6 +86,10 @@ class DetailActivity : AppCompatActivity() {
             }
         } else {
             Toast.makeText(this, "Item tidak ditemukan", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+
+        btnCancelPurchase.setOnClickListener {
             finish()
         }
     }

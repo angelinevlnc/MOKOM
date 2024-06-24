@@ -7,22 +7,26 @@ import android.widget.Button
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.activity.viewModels
+import com.proyekmokom.chastethrift.AppDatabase
+import com.proyekmokom.chastethrift.MainActivity
+import com.proyekmokom.chastethrift.MainActivityAdmin
+import com.proyekmokom.chastethrift.MainActivityPenjual
+import com.proyekmokom.chastethrift.R
 
 class RegisterActivity : AppCompatActivity() {
-    lateinit var username: TextView
-    lateinit var password: TextView
-    lateinit var confirmPassword: TextView
-    lateinit var btnRegister: Button
-    lateinit var rbPembeli: RadioButton
-    lateinit var rbPenjual: RadioButton
-    lateinit var txtToLogin:TextView
 
-    private lateinit var db: AppDatabase
-    private val coroutine = CoroutineScope(Dispatchers.IO)
+    private lateinit var username: TextView
+    private lateinit var password: TextView
+    private lateinit var confirmPassword: TextView
+    private lateinit var btnRegister: Button
+    private lateinit var rbPembeli: RadioButton
+    private lateinit var rbPenjual: RadioButton
+    private lateinit var txtToLogin:TextView
+
+    private val viewModel: RegisterViewModel by viewModels {
+        RegisterViewModelFactory(AppDatabase.build(this))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,69 +40,47 @@ class RegisterActivity : AppCompatActivity() {
         rbPenjual = findViewById(R.id.rbPenjual)
         txtToLogin = findViewById(R.id.txtToLogin)
 
-        db = AppDatabase.build(this)
-
         btnRegister.setOnClickListener {
-            if(username.text.toString().isNotEmpty() && password.text.toString().isNotEmpty() && confirmPassword.text.toString().isNotEmpty()){
-                if(password.text.toString() == confirmPassword.text.toString()){
-                    var role:Int = 0
-                    if(rbPembeli.isChecked){
-                        role = 2
-                    }
-                    else{
-                        role = 1
-                    }
+            val usernameStr = username.text.toString()
+            val passwordStr = password.text.toString()
+            val confirmPasswordStr = confirmPassword.text.toString()
 
-                    val newUser = UserEntity(
-                        id_user = null,
-                        username = username.text.toString(),
-                        password = password.text.toString(),
-                        role = role,
-                    )
-                    coroutine.launch(Dispatchers.IO) {
-                        var user = db.userDao().get(username.text.toString())
-                        if (user.isEmpty()) {
-                            //INSERT
-                            db.userDao().insert(newUser)
+            if (usernameStr.isNotEmpty() && passwordStr.isNotEmpty() && confirmPasswordStr.isNotEmpty()) {
+                if (passwordStr == confirmPasswordStr) {
+                    val role = if (rbPembeli.isChecked) 2 else 1
 
-                            //FETCH TO INTENT TO MAINACTIVITY
-                            user = db.userDao().fetch()
-                            val cek = user.last().role
-                            val idUser = user.last().id_user!!
-
-                            withContext(Dispatchers.Main) {
-                                navigateToMainActivity(cek, idUser)
-                            }
-                        } else {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(this@RegisterActivity, "Username sudah ada!", Toast.LENGTH_SHORT).show()
-                            }
+                    viewModel.registerUser(usernameStr, passwordStr, role,
+                        onSuccess = { role, idUser ->
+                            navigateToMainActivity(role, idUser)
+                        },
+                        onError = { errorMessage ->
+                            Toast.makeText(this@RegisterActivity, errorMessage, Toast.LENGTH_SHORT).show()
                         }
-                    }
-                }
-                else {
+                    )
+                } else {
                     Toast.makeText(this, "Password dan Confirm Password harus sama!", Toast.LENGTH_SHORT).show()
                 }
-            }
-            else {
+            } else {
                 Toast.makeText(this, "Semua inputan harus diisi!", Toast.LENGTH_SHORT).show()
             }
         }
 
         txtToLogin.setOnClickListener{
-            val intent2 = Intent(this, LoginActivity::class.java)
-            startActivity(intent2)
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
             finish()
         }
     }
-    private fun navigateToMainActivity(cek: Int, idUser: Int) {
-        when (cek) {
-            0 -> Toast.makeText(this, "Error, user tidak ditemukan!", Toast.LENGTH_SHORT).show()
+
+    private fun navigateToMainActivity(role: Int, idUser: Int) {
+        when (role) {
             1 -> navigateTo(MainActivityPenjual::class.java, idUser)
             2 -> navigateTo(MainActivity::class.java, idUser)
             3 -> navigateTo(MainActivityAdmin::class.java, idUser)
+            else -> Toast.makeText(this, "Error, user tidak ditemukan!", Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun navigateTo(destination: Class<*>, idUser: Int) {
         val intent = Intent(this, destination)
         intent.putExtra("idUser", idUser)

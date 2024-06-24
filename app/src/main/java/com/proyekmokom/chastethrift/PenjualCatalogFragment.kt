@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 
@@ -21,10 +22,12 @@ class PenjualCatalogFragment : Fragment() {
     lateinit var rvCatalog: RecyclerView
     lateinit var layoutManager: RecyclerView.LayoutManager
 
-    private lateinit var db: AppDatabase
-    private val coroutine = CoroutineScope(Dispatchers.IO)
     private lateinit var itemList: ArrayList<ItemEntity>
     private lateinit var rvCatalogAdapter: RvCatalogAdapter
+
+    private val viewModel: PenjualCatalogViewModel by viewModels {
+        PenjualCatalogViewModelFactory(AppDatabase.build(requireContext()))
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,27 +47,30 @@ class PenjualCatalogFragment : Fragment() {
         val args: PenjualCatalogFragmentArgs by navArgs()
         var idUser:Int = args.idUser
 
-        db = AppDatabase.build(requireContext())
         itemList = ArrayList()
-        rvCatalog.layoutManager = LinearLayoutManager(requireContext(),
-            LinearLayoutManager.VERTICAL, false)
-        rvCatalogAdapter = RvCatalogAdapter(itemList, requireContext()){ itemId: Int? ->
+
+        setupRecyclerView()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val fetchedItems = viewModel.fetchIdUserAndStatusTrue(idUser)
+                itemList.clear() // Clear existing items
+                itemList.addAll(fetchedItems) // Add fetched items to itemList
+                rvCatalogAdapter.notifyDataSetChanged() // Notify adapter of data change
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    private fun setupRecyclerView() {
+        rvCatalog.layoutManager = LinearLayoutManager(requireContext())
+        rvCatalogAdapter = RvCatalogAdapter(itemList, requireContext()) { itemId ->
             if (itemId != null){
                 val action = PenjualCatalogFragmentDirections
                     .actionPenjualCatalogFragmentToPenjualEditFragment(itemId)
                 findNavController().navigate(action)
             }
-
         }
         rvCatalog.adapter = rvCatalogAdapter
-
-        coroutine.launch(Dispatchers.IO) {
-            val tmpItemList = db.itemDao().searchIdUserAndStatusTrue(idUser)
-            itemList.clear()
-            itemList.addAll(tmpItemList)
-            withContext(Dispatchers.Main) {
-                rvCatalogAdapter.notifyDataSetChanged()
-            }
-        }
     }
 }

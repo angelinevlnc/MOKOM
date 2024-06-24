@@ -2,6 +2,7 @@ package com.proyekmokom.chastethrift
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
@@ -25,8 +28,10 @@ class PenjualProfileFragment : Fragment() {
     lateinit var btnLogoutPenjual: Button
     lateinit var imgProfilePenjual: ImageView
 
-    private lateinit var db: AppDatabase
-    private val coroutine = CoroutineScope(Dispatchers.IO)
+    private val args: PenjualProfileFragmentArgs by navArgs()
+    private val viewModel: PenjualProfileViewModel by viewModels {
+        PenjualProfileViewModelFactory(AppDatabase.build(requireContext()))
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,7 +43,6 @@ class PenjualProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val args: PenjualProfileFragmentArgs by navArgs()
         var idUser:Int = args.idUser
 
         txtUsernamePenjual = view.findViewById(R.id.txtUsernamePenjual)
@@ -47,15 +51,16 @@ class PenjualProfileFragment : Fragment() {
         btnLogoutPenjual = view.findViewById(R.id.btnLogoutPenjual)
         imgProfilePenjual = view.findViewById(R.id.imgProfilePenjual)
 
-        db = AppDatabase.build(requireContext())
-
-        coroutine.launch(Dispatchers.IO) {
-            var user = db.userDao().searchById(idUser)
-            withContext(Dispatchers.Main) {
+        viewModel.getUserById(args.idUser).observe(viewLifecycleOwner, Observer { user ->
+            if (user != null) {
                 txtUsernamePenjual.text = user.username
                 imgProfilePenjual.setImageResource(user.gambar)
+            } else {
+                Log.e("AdminProfileFragment", "User not found with id: ${args.idUser}")
+                txtUsernamePenjual.text = "User not found"
+                imgProfilePenjual.setImageResource(R.drawable.ic_profile)
             }
-        }
+        })
 
         btnEditProfilePenjual.setOnClickListener {
             val action = PenjualProfileFragmentDirections
