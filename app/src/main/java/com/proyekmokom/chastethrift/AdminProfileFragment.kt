@@ -23,7 +23,9 @@ class AdminProfileFragment : Fragment() {
     lateinit var imgProfileAdmin: ImageView
 
     private val viewModel: AdminProfileViewModel by viewModels {
-        AdminProfileViewModelFactory(AppDatabase.build(requireContext()))
+        val appDatabase = AppDatabase.build(requireContext())
+        val userRepository = UserRepository(appDatabase.userDao())
+        AdminProfileViewModelFactory(userRepository)
     }
 
     override fun onCreateView(

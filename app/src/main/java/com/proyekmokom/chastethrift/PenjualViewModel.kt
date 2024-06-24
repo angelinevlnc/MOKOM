@@ -10,10 +10,10 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.withContext
 
-class PenjualProfileViewModel(private val db: AppDatabase) : ViewModel() {
+class PenjualProfileViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun getUserById(idUser: Int) = liveData(Dispatchers.IO) {
         try {
-            val user = db.userDao().searchById(idUser)
+            val user = userRepository.searchById(idUser)
             emit(user)
         } catch (e: Exception) {
             emit(null)
@@ -21,29 +21,29 @@ class PenjualProfileViewModel(private val db: AppDatabase) : ViewModel() {
     }
 }
 
-class PenjualProfileViewModelFactory(private val db: AppDatabase) : ViewModelProvider.Factory {
+class PenjualProfileViewModelFactory(private val userRepository: UserRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PenjualProfileViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return PenjualProfileViewModel(db) as T
+            return PenjualProfileViewModel(userRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
 
-class PenjualCatalogViewModel(private val db: AppDatabase) : ViewModel() {
-    suspend fun fetchIdUserAndStatusTrue(idUser: Int): List<ItemEntity> {
+class PenjualCatalogViewModel(private val itemRepository: ItemRepository) : ViewModel() {
+    suspend fun fetchIdUserAndStatusTrue(idUser: Int): LiveData<List<ItemEntity>> {
         return withContext(Dispatchers.IO) {
-            db.itemDao().searchIdUserAndStatusTrue(idUser)
+            itemRepository.fetchIdUserAndStatusTrue(idUser)
         }
     }
 }
 
-class PenjualCatalogViewModelFactory(private val db: AppDatabase) : ViewModelProvider.Factory {
+class PenjualCatalogViewModelFactory(private val itemRepository: ItemRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PenjualCatalogViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return PenjualCatalogViewModel(db) as T
+            return PenjualCatalogViewModel(itemRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
@@ -51,10 +51,10 @@ class PenjualCatalogViewModelFactory(private val db: AppDatabase) : ViewModelPro
 
 
 
-class PenjualEditViewModel(private val db: AppDatabase) : ViewModel() {
+class PenjualEditViewModel(private val itemRepository: ItemRepository) : ViewModel() {
     fun getItemById(idItem: Int, onSuccess: (ItemEntity) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            val item = db.itemDao().itemById(idItem)
+            val item = itemRepository.itemById(idItem)
             withContext(Dispatchers.Main) {
                 onSuccess(item)
             }
@@ -63,24 +63,24 @@ class PenjualEditViewModel(private val db: AppDatabase) : ViewModel() {
 
     fun updateItem(gambar:String, nama:String, harga:Int, deskripsi:String?, brand:String?, size:String, id_item: Int, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            db.itemDao().updateEdit(gambar, nama, harga, deskripsi, brand, size, id_item)
+            itemRepository.updateEdit(gambar, nama, harga, deskripsi, brand, size, id_item)
             onSuccess()
         }
     }
 
     fun deleteItem(idItem: Int, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            db.itemDao().updateStatus(0, idItem)
+            itemRepository.updateStatus(0, idItem)
             onSuccess()
         }
     }
 }
 
-class PenjualEditViewModelFactory(private val db: AppDatabase) : ViewModelProvider.Factory {
+class PenjualEditViewModelFactory(private val itemRepository: ItemRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PenjualEditViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return PenjualEditViewModel(db) as T
+            return PenjualEditViewModel(itemRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

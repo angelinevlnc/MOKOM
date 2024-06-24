@@ -77,11 +77,15 @@ class AdminApprovalListFragment : Fragment() {
 
     private fun fetchData () {
         coroutine.launch(Dispatchers.IO) {
-            val tmpItemList = db.itemDao().fetchUnApproved()
-            itemList.clear()
-            itemList.addAll(tmpItemList)
+            val liveData = db.itemDao().fetchUnApproved()
             withContext(Dispatchers.Main) {
-                rvCatalogAdapter.notifyDataSetChanged()
+                liveData.observe(viewLifecycleOwner) { tmpItemList ->
+                    tmpItemList?.let {
+                        itemList.clear()
+                        itemList.addAll(it)
+                        rvCatalogAdapter.notifyDataSetChanged()
+                    }
+                }
             }
         }
     }

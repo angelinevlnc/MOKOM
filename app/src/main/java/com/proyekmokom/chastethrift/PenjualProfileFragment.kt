@@ -30,7 +30,9 @@ class PenjualProfileFragment : Fragment() {
 
     private val args: PenjualProfileFragmentArgs by navArgs()
     private val viewModel: PenjualProfileViewModel by viewModels {
-        PenjualProfileViewModelFactory(AppDatabase.build(requireContext()))
+        val appDatabase = AppDatabase.build(requireContext())
+        val userRepository = UserRepository(appDatabase.userDao())
+        PenjualProfileViewModelFactory(userRepository)
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

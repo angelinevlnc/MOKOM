@@ -29,7 +29,9 @@ class EditProfileFragment : Fragment() {
 
     private val args: EditProfileFragmentArgs by navArgs()
     private val viewModel: EditProfileViewModel by viewModels {
-        EditProfileViewModelFactory(AppDatabase.build(requireContext()))
+        val appDatabase = AppDatabase.build(requireContext())
+        val userRepository = UserRepository(appDatabase.userDao())
+        EditProfileViewModelFactory(userRepository)
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

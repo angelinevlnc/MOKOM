@@ -1,5 +1,6 @@
 package com.proyekmokom.chastethrift
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -9,23 +10,23 @@ import androidx.room.Update
 @Dao
 interface HTransDao {
     @Insert
-    fun insert(item:ItemEntity)
+    suspend fun insert(htrans:HTransEntity)
 
     @Update
-    fun update(item:ItemEntity)
+    suspend fun update(htrans:HTransEntity)
 
     @Delete
-    fun delete(item:ItemEntity)
+    suspend fun delete(htrans:HTransEntity)
 
-    @Query("UPDATE htrans SET status = :status")
-    fun updateStatus(status: Int) // 0 = gagal; 1 = proses; 2 = berhasil
+    @Query("UPDATE htrans SET status = :status where id_htrans = :id_htrans")
+    suspend fun updateStatus(status: Int, id_htrans:Int) // 0 = gagal; 1 = proses; 2 = berhasil
 
     @Query("SELECT * FROM htrans")
-    fun fetch():List<HTransEntity>
+    fun fetch(): LiveData<List<HTransEntity>>
 
     @Query("SELECT * FROM htrans where id_penjual = :id_user")
-    fun searchIdPenjual(id_user:Int):List<HTransEntity> //cari berdasarkan ID Penjual
+    fun searchIdPenjual(id_user:Int):LiveData<List<HTransEntity>> //cari berdasarkan ID Penjual
 
     @Query("SELECT * FROM htrans where id_pembeli = :id_user")
-    fun searchIdPembeli(id_user:Int):List<HTransEntity> //cari berdasarkan ID Pembeli
+    fun searchIdPembeli(id_user:Int):LiveData<List<HTransEntity>> //cari berdasarkan ID Pembeli
 }
