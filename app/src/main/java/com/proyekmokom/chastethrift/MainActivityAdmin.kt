@@ -14,8 +14,7 @@ class MainActivityAdmin : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_admin)
 
-        val idUser = intent.getIntExtra("idUser", 3) // 0 if extra "idUser" is not found
-        Toast.makeText(this, idUser.toString(), Toast.LENGTH_SHORT).show()
+        val idUser = intent.getIntExtra("idUser", 0) // 0 if extra "idUser" is not found
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_admin) as NavHostFragment
         val navController = navHostFragment.navController

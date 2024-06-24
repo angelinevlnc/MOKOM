@@ -26,8 +26,8 @@ interface UserDao {
     @Query("SELECT * FROM user")
     fun fetch():List<UserEntity>
 
-    @Query("SELECT * FROM user where username = :username")
-    fun get(username:String):List<UserEntity> //cek username sama saat register/edit profile
+    @Query("SELECT * FROM user where username = :username AND status = 1")
+    fun get(username:String):List<UserEntity> //cek username user aktif sama saat register/edit profile
 
     @Query("SELECT * FROM user where username = :username AND password = :password AND status = 1")
     fun cek(username:String, password:String):List<UserEntity> //cek login
