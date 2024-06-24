@@ -26,7 +26,9 @@ class PenjualCatalogFragment : Fragment() {
     private lateinit var rvCatalogAdapter: RvCatalogAdapter
 
     private val viewModel: PenjualCatalogViewModel by viewModels {
-        PenjualCatalogViewModelFactory(AppDatabase.build(requireContext()))
+        val appDatabase = AppDatabase.build(requireContext())
+        val itemRepository = ItemRepository(appDatabase.itemDao())
+        PenjualCatalogViewModelFactory(itemRepository)
     }
 
     override fun onCreateView(
@@ -53,10 +55,14 @@ class PenjualCatalogFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val fetchedItems = viewModel.fetchIdUserAndStatusTrue(idUser)
-                itemList.clear() // Clear existing items
-                itemList.addAll(fetchedItems) // Add fetched items to itemList
-                rvCatalogAdapter.notifyDataSetChanged() // Notify adapter of data change
+                val liveData = viewModel.fetchIdUserAndStatusTrue(idUser)
+                withContext(Dispatchers.Main) {
+                    liveData.observe(viewLifecycleOwner) { fetchedItems ->
+                        itemList.clear() // Clear existing items
+                        itemList.addAll(fetchedItems) // Add fetched items to itemList
+                        rvCatalogAdapter.notifyDataSetChanged() // Notify adapter of data change
+                    }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

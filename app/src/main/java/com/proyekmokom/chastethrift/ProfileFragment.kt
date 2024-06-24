@@ -29,7 +29,9 @@ class ProfileFragment : Fragment() {
     lateinit var imgProfilePembeli: ImageView
 
     private val viewModel: PembeliProfileViewModel by viewModels {
-        PembeliProfileViewModelFactory(AppDatabase.build(requireContext()))
+        val appDatabase = AppDatabase.build(requireContext())
+        val userRepository = UserRepository(appDatabase.userDao())
+        PembeliProfileViewModelFactory(userRepository)
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -22,7 +22,9 @@ import kotlinx.coroutines.withContext
 class PenjualEditFragment : Fragment() {
 
     private val viewModel: PenjualEditViewModel by viewModels {
-        PenjualEditViewModelFactory(AppDatabase.build(requireContext()))
+        val appDatabase = AppDatabase.build(requireContext())
+        val itemRepository = ItemRepository(appDatabase.itemDao())
+        PenjualEditViewModelFactory(itemRepository)
     }
 
     lateinit var buttonSellEdit: Button

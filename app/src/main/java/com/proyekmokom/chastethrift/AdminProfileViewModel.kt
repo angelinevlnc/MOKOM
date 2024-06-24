@@ -5,10 +5,10 @@ import androidx.lifecycle.liveData
 import kotlinx.coroutines.Dispatchers
 import androidx.lifecycle.ViewModelProvider
 
-class AdminProfileViewModel(private val db: AppDatabase) : ViewModel() {
+class AdminProfileViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun getUserById(idUser: Int) = liveData(Dispatchers.IO) {
         try {
-            val user = db.userDao().searchById(idUser)
+            val user = userRepository.searchById(idUser)
             emit(user)
         } catch (e: Exception) {
             emit(null)
@@ -16,11 +16,11 @@ class AdminProfileViewModel(private val db: AppDatabase) : ViewModel() {
     }
 }
 
-class AdminProfileViewModelFactory(private val db: AppDatabase) : ViewModelProvider.Factory {
+class AdminProfileViewModelFactory(private val userRepository: UserRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AdminProfileViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return AdminProfileViewModel(db) as T
+            return AdminProfileViewModel(userRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

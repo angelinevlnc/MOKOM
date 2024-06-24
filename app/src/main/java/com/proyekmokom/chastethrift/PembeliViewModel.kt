@@ -10,44 +10,44 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.withContext
 
-class EditProfileViewModel(private val db: AppDatabase) : ViewModel() {
+class EditProfileViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _user = MutableLiveData<UserEntity?>()
     val user: LiveData<UserEntity?> get() = _user
 
     fun getUserById(idUser: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val fetchedUser = db.userDao().searchById(idUser)
+            val fetchedUser = userRepository.searchById(idUser)
             _user.postValue(fetchedUser)
         }
     }
 
     fun updateUserProfile(username: String, newPassword: String, idUser: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            db.userDao().updateProfile(username, newPassword, idUser)
+            userRepository.updateProfile(username, newPassword, idUser)
         }
     }
 
     fun deleteUser(idUser: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            db.userDao().updateStatus(0, idUser)
+            userRepository.updateStatus(0, idUser)
         }
     }
 }
 
-class EditProfileViewModelFactory(private val db: AppDatabase) : ViewModelProvider.Factory {
+class EditProfileViewModelFactory(private val userRepository: UserRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(EditProfileViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return EditProfileViewModel(db) as T
+            return EditProfileViewModel(userRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
 
-class PembeliProfileViewModel(private val db: AppDatabase) : ViewModel() {
+class PembeliProfileViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun getUserById(idUser: Int) = liveData(Dispatchers.IO) {
         try {
-            val user = db.userDao().searchById(idUser)
+            val user = userRepository.searchById(idUser)
             emit(user)
         } catch (e: Exception) {
             emit(null)
@@ -55,29 +55,29 @@ class PembeliProfileViewModel(private val db: AppDatabase) : ViewModel() {
     }
 }
 
-class PembeliProfileViewModelFactory(private val db: AppDatabase) : ViewModelProvider.Factory {
+class PembeliProfileViewModelFactory(private val userRepository: UserRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PembeliProfileViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return PembeliProfileViewModel(db) as T
+            return PembeliProfileViewModel(userRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
 
-class HomeViewModel(private val db: AppDatabase) : ViewModel() {
-    suspend fun fetchItems(): List<ItemEntity> {
+class HomeViewModel(private val itemRepository: ItemRepository) : ViewModel() {
+    suspend fun fetchItems(): LiveData<List<ItemEntity>> {
         return withContext(Dispatchers.IO) {
-            db.itemDao().fetchStatusTrue()
+            itemRepository.fetchStatusTrue()
         }
     }
 }
 
-class HomeViewModelFactory(private val db: AppDatabase) : ViewModelProvider.Factory {
+class HomeViewModelFactory(private val itemRepository: ItemRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return HomeViewModel(db) as T
+            return HomeViewModel(itemRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

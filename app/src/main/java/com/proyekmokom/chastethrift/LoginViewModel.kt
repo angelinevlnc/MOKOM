@@ -9,10 +9,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.lifecycle.ViewModelProvider
 
-class LoginViewModel(private val db: AppDatabase) : ViewModel() {
+class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun loginUser(username: String, password: String, onSuccess: (Int, Int) -> Unit, onError: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            val user = db.userDao().cek(username, password)
+            val user = userRepository.cek(username, password)
             if (user.isNotEmpty()) {
                 val role = user.first().role
                 val idUser = user.first().id_user!!
@@ -28,17 +28,17 @@ class LoginViewModel(private val db: AppDatabase) : ViewModel() {
     }
 }
 
-class LoginViewModelFactory(private val db: AppDatabase) : ViewModelProvider.Factory {
+class LoginViewModelFactory(private val userRepository: UserRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return LoginViewModel(db) as T
+            return LoginViewModel(userRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
 
-class RegisterViewModel(private val db: AppDatabase) : ViewModel() {
+class RegisterViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun registerUser(
         username: String,
         password: String,
@@ -49,7 +49,7 @@ class RegisterViewModel(private val db: AppDatabase) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 // Check if username already exists
-                val user = db.userDao().get(username)
+                val user = userRepository.get(username)
                 if (user.isEmpty()) {
                     // Insert new user
                     val newUser = UserEntity(
@@ -58,10 +58,10 @@ class RegisterViewModel(private val db: AppDatabase) : ViewModel() {
                         password = password,
                         role = role
                     )
-                    db.userDao().insert(newUser)
+                    userRepository.insert(newUser)
 
                     // Fetch inserted user (assuming fetch() returns a list of users)
-                    val insertedUser = db.userDao().fetch().lastOrNull()
+                    val insertedUser = userRepository.fetch().value?.lastOrNull()
                     if (insertedUser != null) {
                         withContext(Dispatchers.Main) {
                             onSuccess(insertedUser.role, insertedUser.id_user!!)
@@ -85,11 +85,11 @@ class RegisterViewModel(private val db: AppDatabase) : ViewModel() {
     }
 }
 
-class RegisterViewModelFactory(private val db: AppDatabase) : ViewModelProvider.Factory {
+class RegisterViewModelFactory(private val userRepository: UserRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RegisterViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return RegisterViewModel(db) as T
+            return RegisterViewModel(userRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

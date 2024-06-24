@@ -25,7 +25,9 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var txtToLogin:TextView
 
     private val viewModel: RegisterViewModel by viewModels {
-        RegisterViewModelFactory(AppDatabase.build(this))
+        val appDatabase = AppDatabase.build(this)
+        val userRepository = UserRepository(appDatabase.userDao())
+        RegisterViewModelFactory(userRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

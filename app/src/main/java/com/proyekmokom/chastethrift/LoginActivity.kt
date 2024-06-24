@@ -22,7 +22,9 @@ class LoginActivity : AppCompatActivity() {
     lateinit var txtToRegister:TextView
 
     private val viewModel: LoginViewModel by viewModels {
-        LoginViewModelFactory(AppDatabase.build(this))
+        val appDatabase = AppDatabase.build(this)
+        val userRepository = UserRepository(appDatabase.userDao())
+        LoginViewModelFactory(userRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

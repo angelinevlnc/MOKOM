@@ -33,7 +33,9 @@ class HomeFragment : Fragment() {
 
     private val args: HomeFragmentArgs by navArgs()
     private val viewModel: HomeViewModel by viewModels {
-        HomeViewModelFactory(AppDatabase.build(requireContext()))
+        val appDatabase = AppDatabase.build(requireContext())
+        val itemRepository = ItemRepository(appDatabase.itemDao())
+        HomeViewModelFactory(itemRepository)
     }
 
     override fun onCreateView(
@@ -58,10 +60,14 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val fetchedItems = viewModel.fetchItems()
-                itemList.clear() // Clear existing items
-                itemList.addAll(fetchedItems) // Add fetched items to itemList
-                rvCatalogAdapter.notifyDataSetChanged() // Notify adapter of data change
+                val liveData = viewModel.fetchItems()
+                withContext(Dispatchers.Main) {
+                    liveData.observe(viewLifecycleOwner) { fetchedItems ->
+                        itemList.clear() // Clear existing items
+                        itemList.addAll(fetchedItems) // Add fetched items to itemList
+                        rvCatalogAdapter.notifyDataSetChanged() // Notify adapter of data change
+                    }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
