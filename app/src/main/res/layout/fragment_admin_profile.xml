@@ -37,6 +37,7 @@
         android:layout_marginTop="47dp"
         android:backgroundTint="#C65278"
         android:text="Edit Profile"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtRoleAdmin" />
 
